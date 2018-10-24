@@ -10,6 +10,7 @@ class Apostas():
 
    # fracao da banca
    def setFraction(self, _fraction):
+      #if _fraction is None: _fraction = 0.05
       self.s_fraction = _fraction
 
    # Quanto sera apostado
@@ -22,7 +23,7 @@ class Apostas():
    def getRetMedio(self):
       return self.ret_medio
 
-   def calculaRetornoSimulado(p_X, p_Y, coefs, inter):
+   def calculaRetornoSimulado(self, p_X, p_Y, coefs, inter):
       saldo = 1000
       ret_medio = 0
       for n in range(len(p_Y)):

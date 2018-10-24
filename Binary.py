@@ -27,7 +27,7 @@ class Binary():
    def getY(self):
       return self.precos_Y
 
-   def coletaDados(self):
+   def coletaDados(self, silencioso=True):
       precos_X = []
       precos_Y = [] # 1 se tick 5 foi maior ou 0 se foi menor
       from Hush import APP_ID
@@ -66,9 +66,8 @@ class Binary():
                   tick5 = 0
                precos_Y.append( tick5 )
                precos_X.append( linhaX )
-         if( n % 10 == 0):
+         if( n % 10 == 0 and not silencioso):
             print("N=", n, ", X=", len(precos_X[-1]), ", Y=", len(precos_Y), ", Ret=", len(jasao['history']['prices']))
-      #print("N=", n, ", X=", len(precos_X), ", Y=", len(precos_Y) )
       self.precos_X = precos_X
       self.precos_Y = precos_Y
       #return precos_X, precos_Y

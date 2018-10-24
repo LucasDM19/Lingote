@@ -2,12 +2,14 @@
 Classe que faz a regressao linear dos dados informados. 
 A intencao e atuar como uma substituta do Weka.
 """
+
+from sklearn import linear_model   # pip install sklearn
+from sklearn.metrics import mean_squared_error, r2_score
+
 class RegressaoLinear:
 
    # So na hora de instanciar que tenta importar
    def __init__(self, _X=None, _Y=None):
-      from sklearn import linear_model   # pip install sklearn
-      from sklearn.metrics import mean_squared_error, r2_score
       if( _X is not None ): self.setX(_X)
       if( _Y is not None ): self.setY(_Y)
    
@@ -38,7 +40,7 @@ class RegressaoLinear:
       return self.regr.coef_
       
    def getIntercept(self):
-      return self.regr.intercept
+      return self.regr.intercept_
    
    #Separa entre dados para modelo e para testes
    def separaDados(self):
@@ -52,10 +54,10 @@ class RegressaoLinear:
       self.Y_train = self.Y[:-1*self.corte]
       self.Y_test = self.Y[-1*self.corte:]
       
-   def fazRegressaoLinear(indice_corte=0.5):
+   def fazRegressaoLinear(self, indice_corte=0.5):
       #Regressao
       self.indice_corte = indice_corte
-      separaDados() # Split the data
+      self.separaDados() # Split the data
       
       # Create linear regression object
       self.regr = linear_model.LinearRegression()
