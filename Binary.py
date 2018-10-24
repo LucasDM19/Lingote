@@ -45,21 +45,27 @@ class Binary():
       print( jasao['balance']['balance'] )
       return jasao['balance']['balance']
    
-   def fazAposta(self, quantidade):
-      json_data = ({
+   def fazAposta(self, quantidade, simbolo):
+      json_data = json.dumps({
         "proposal": 1,
-        "amount": "100",
-        "basis": "payout",
-        "contract_type": "CALL",
+        "amount": str(quantidade),
+        "basis": "stake",
+        "contract_type": "CALL", # "CALL" para acima "PUT" para Abaixo
         "currency": "USD",
-        "duration": "60",
-        "duration_unit": "s",
-        "barrier": "+0.1",
-        "symbol": "R_100" })
+        "duration": "5",
+        "duration_unit": "t",
+        "symbol": simbolo })
       result = self.chamaURL(json_data)
       jasao = json.loads(result)
-      #print( jasao['balance']['balance'] )
-      #return jasao['balance']['balance']
+      print( jasao ) # jasao['error']['message']
+      id_contrato = jasao['echo_req']['proposal']['id']
+      
+      json_data = json.dumps({
+         "buy": id_contrato, #"5951bc87-4967-5eb5-5c73-f1de191ac903",
+         "price": 1.1 })
+      result = self.chamaURL(json_data)
+      jasao = json.loads(result)
+      return jasao
    
    def coletaDado(self, qtd_registros):
       json_data = json.dumps({
