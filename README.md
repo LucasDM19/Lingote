@@ -1,4 +1,23 @@
 # Lingote
+Em busca do Cisne Negro cavalgando um Unicórnio.
+
+# Componentes
+- LinearRegressionDiabetes.py
+Uma Regressão Linear com a base de exemplo, para classificar diabetes.
+- Sample.py
+Se conecta na API da Binary, e obtém um fluxo infinito de variações da moeda.
+- SampleLinearRegression2.py
+Primeira tentativa de fazer uma Regressão Linear com o fluxo da API Binary. 
+- SampleLinearRegression.py
+Regressão Linear com o histórico de uma moeda, via API da Binary. 
+- Highlander.py
+Buscador de cenários e variações. Acha o melhor hiper parâmetro para a Regressão Linear. 
+- RegressaoLinear.py
+Faz Regressão Linear de conjuntos X e Y informados.
+- Binary.py
+Acessa a API da Binary, e retorna os dados em formatos X Y.
+- Apostas.py
+Simula apostas do mercado Binary, usando a Regressão Linear.
 
 
 # Requisitos
