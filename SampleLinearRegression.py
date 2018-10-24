@@ -4,7 +4,7 @@ import json
 from sklearn import linear_model   # pip install sklearn
 from sklearn.metrics import mean_squared_error, r2_score
 
-def coletaDados(num_linhas, num_coef):
+def coletaDados(num_linhas, num_coef, moeda="frxAUDJPY"):
    precos_X = []
    precos_Y = [] # 1 se tick 5 foi maior ou 0 se foi menor
    from Hush import APP_ID
@@ -12,7 +12,7 @@ def coletaDados(num_linhas, num_coef):
    for n in range(num_linhas):
       ws = websocket.create_connection(apiUrl)
       json_data = json.dumps({
-        "ticks_history": "frxAUDJPY",
+        "ticks_history": moeda,
         "end": "latest",
         #"start": 1,
         "style": "ticks",
@@ -24,22 +24,25 @@ def coletaDados(num_linhas, num_coef):
       jasao = json.loads(result)
       #print(jasao['history']['prices'])
       #print("Ret=", len(jasao['history']['prices']) )
-      for y in range(len(jasao['history']['prices'])-10):   # Vou de 10 em 10
-         linhaX = []
-         for i in range(y+1,y+10):   # Para cada grupo de 10 itens
-            p_atual = float(jasao['history']['prices'][-1*i])
-            p_anterior = float(jasao['history']['prices'][-1*i-1])
-            v = (p_atual - p_anterior)/(p_anterior)
-            #print(i, p_atual, p_anterior, v)
-            linhaX.append(v)
-         p_tick5 = float(jasao['history']['prices'][-5])
-         p_recente = float(jasao['history']['prices'][-1])
-         if( p_tick5 > p_recente ):
-            tick5 = 1
-         else:
-            tick5 = 0
-         precos_Y.append( tick5 )
-         precos_X.append( linhaX )
+      if('history' not in jasao):
+         print("JSon estranho!", jasao['error']['code'], " - ", jasao['error']['message'])
+      else: # Tudo blz com o Json
+         for y in range(len(jasao['history']['prices'])-10):   # Vou de 10 em 10
+            linhaX = []
+            for i in range(y+1,y+10):   # Para cada grupo de 10 itens
+               p_atual = float(jasao['history']['prices'][-1*i])
+               p_anterior = float(jasao['history']['prices'][-1*i-1])
+               v = (p_atual - p_anterior)/(p_anterior)
+               #print(i, p_atual, p_anterior, v)
+               linhaX.append(v)
+            p_tick5 = float(jasao['history']['prices'][-5])
+            p_recente = float(jasao['history']['prices'][-1])
+            if( p_tick5 > p_recente ):
+               tick5 = 1
+            else:
+               tick5 = 0
+            precos_Y.append( tick5 )
+            precos_X.append( linhaX )
       if( n % 10 == 0):
          print("N=", n, ", X=", len(precos_X[-1]), ", Y=", len(precos_Y), ", Ret=", len(jasao['history']['prices']))
    #print("N=", n, ", X=", len(precos_X), ", Y=", len(precos_Y) )
@@ -86,11 +89,9 @@ def calculaRetornoSimulado(p_X, p_Y, coefs, inter):
          saldo -= stake
          ret_medio -= 1   # Ver retorno unitario
       #print("N=", n, ", Y=", p_Y[n], ", calc=", y_calc, txt)
-   print("saldo=", saldo, ", Ret Md=", 1.0*ret_medio/len(p_Y) )
- 
-if __name__ == "__main__":
-   n_reg=100
-   n_coef=10
+   return saldo, 1.0*ret_medio/len(p_Y)
+
+def fazSimulacao(n_reg, n_coef ):
    p_X, p_Y = coletaDados(n_reg, n_coef)
    #print("X=", p_X, ", Y=", p_Y )
    
@@ -105,4 +106,12 @@ if __name__ == "__main__":
    # Explained variance score: 1 is perfect prediction
    print('Variance score: %.2f' % r2_score(p_Y_test, p_Y_pred))
    
-   calculaRetornoSimulado(p_X_test, p_Y_test, regr.coef_, regr.intercept_ )
+   saldo, ret_unit = calculaRetornoSimulado(p_X_test, p_Y_test, regr.coef_, regr.intercept_ )
+   return saldo, ret_unit
+   
+if __name__ == "__main__":
+   n_reg=100
+   n_coef=10
+   saldo, ret_unit = fazSimulacao(n_reg, n_coef)
+   print("saldo=", saldo, ", Ret Md=", ret_unit )
+   
