@@ -27,10 +27,41 @@ class Binary():
    def getY(self):
       return self.precos_Y
 
-   def coletaDado(self, qtd_registros):
+   def chamaURL(self, json_data):
       from Hush import APP_ID
       apiUrl = "wss://ws.binaryws.com/websockets/v3?app_id="+APP_ID
       ws = websocket.create_connection(apiUrl)
+      ws.send(json_data)
+      result = ws.recv()
+      ws.close()   # Vamos economizar
+      return result
+   
+   def obtemSaldo(self):
+      json_data = json.dumps({
+         "balance": 1,
+         "subscribe": 1 })
+      result = self.chamaURL(json_data)
+      jasao = json.loads(result)
+      print( jasao['balance']['balance'] )
+      return jasao['balance']['balance']
+   
+   def fazAposta(self, quantidade):
+      json_data = ({
+        "proposal": 1,
+        "amount": "100",
+        "basis": "payout",
+        "contract_type": "CALL",
+        "currency": "USD",
+        "duration": "60",
+        "duration_unit": "s",
+        "barrier": "+0.1",
+        "symbol": "R_100" })
+      result = self.chamaURL(json_data)
+      jasao = json.loads(result)
+      #print( jasao['balance']['balance'] )
+      #return jasao['balance']['balance']
+   
+   def coletaDado(self, qtd_registros):
       json_data = json.dumps({
         "ticks_history": self.moeda,
         "end": "latest",
@@ -38,9 +69,7 @@ class Binary():
         "style": "ticks",
         "adjust_start_time": 1,
         "count": qtd_registros })
-      ws.send(json_data)
-      result = ws.recv()
-      ws.close()   # Vamos economizar
+      result = self.chamaURL(json_data)
       jasao = json.loads(result)
       #print(jasao['history']['prices'])
       #print("Ret=", len(jasao['history']['prices']) )
@@ -90,7 +119,6 @@ class Binary():
             print(self.num_linhas, quantidade_fracao, X2, precos_X)
       self.precos_X = precos_X
       self.precos_Y = precos_Y
-      #return precos_X, precos_Y
       
 if __name__ == "__main__":
    b = Binary()
