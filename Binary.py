@@ -57,7 +57,8 @@ class Binary():
                v = (p_atual - p_anterior)/(p_anterior)
                #print(i, p_atual, p_anterior, v)
                linhaX.append(v)
-            p_tick5 = float(jasao['history']['prices'][-5])
+            tick_meio = int(self.num_coef/2)
+            p_tick5 = float(jasao['history']['prices'][-1*tick_meio])
             p_recente = float(jasao['history']['prices'][-1])
             if( p_tick5 > p_recente ):
                tick5 = 1
@@ -82,8 +83,11 @@ class Binary():
       X2, Y2, tot_prices = self.coletaDado(quantidade_fracao)
       precos_X += X2
       precos_Y += Y2
-      if( not silencioso):
-         print("X=", len(precos_X[-1]), ", Y=", len(precos_Y), ", Ret=", tot_prices)
+      if( not silencioso and len(precos_X) > 1 ):
+         try:
+            print("X=", len(precos_X[-1]), ", Y=", len(precos_Y), ", Ret=", tot_prices)
+         except IndexError:
+            print(self.num_linhas, quantidade_fracao, X2, precos_X)
       self.precos_X = precos_X
       self.precos_Y = precos_Y
       #return precos_X, precos_Y

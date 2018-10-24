@@ -14,10 +14,13 @@ class Highlander():
       
    def getApostas(self):
       return self.a
+      
+   def getRegLin(self):
+      return self.rl
    
    def percorreModelo(self, n_reg, n_coef, moeda):
       self.b = Binary(n_reg, n_coef, moeda ) # Coleto os dados
-      self.b.coletaDados(silencioso=False)
+      self.b.coletaDados(silencioso=True)
       
       # Faz a regressao      
       self.rl = RegressaoLinear( self.b.getX(), self.b.getY() )
@@ -31,10 +34,10 @@ if __name__ == "__main__":
       h = Highlander()
       print("Highlander vive e funciona!")
       from random import randint
-      n_reg = randint(3, 2000)
+      n_reg = randint(3, 9000)
       n_coef = randint(3, 20)
       import random
       moedas = ["frxUSDJPY", "frxGBPUSD", "frxAUDUSD", "frxUSDCAD", "frxEURJPY", "frxUSDCHF", "frxEURCHF", "frxEURGBP", "frxAUDJPY"]
       moeda=random.choice(moedas)
       h.percorreModelo(n_reg, n_coef, moeda)
-      print("Reg=", n_reg, ", coef=", n_coef, ", moeda=", moeda, ", saldo=", h.getApostas().getSaldo(), " ret_medio=", h.getApostas().getRetMedio() )
+      print("Reg=", n_reg, ", coef=", n_coef, ", moeda=", moeda, ", saldo=", h.getApostas().getSaldo(), " ret_medio=", h.getApostas().getRetMedio(), "eq=", h.getRegLin().getCoeficients(), "+", h.getRegLin().getIntercept() )
