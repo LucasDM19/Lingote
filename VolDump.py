@@ -1,63 +1,61 @@
 import random
 
 class AcaoAleatoria():
-   def __init__(self, _nome, _deveOscilar):
+   def __init__(self, _nome, _deveOscilar, _saldo=0):
       self.nome = _nome
       self.deveOscilar = _deveOscilar
+      self.saldo = _saldo
+      self.info = ""
+   
+   def setSaldo(self, novoSaldo):
+      self.saldo = novoSaldo
       
+   def getSaldo(self):
+      return self.saldo
+      
+   def getInfo(self):
+      return self.info
+   
    def atualizaAcao(self):
-      if( self.deveOscilar ):
-         if( random.random() >= 0.5 ): # Sobe!
-            self.saldo = 2*self.saldo
-            self.info = " "+self.nome+" dobrou"
-         else:
-            self.saldo = self.saldo/2
-            self.info = " "+self.nome+" encolheu"
-         else:
-            self.info = " "+self.nome+" constante"
+      if( self.deveOscilar == False ):
+         self.info = " "+self.nome+" constante"
+         return
+         
+      if( random.random() >= 0.5 ): # Sobe!
+         self.saldo = 2*self.saldo
+         self.info = " "+self.nome+" dobrou"
+      else:
+         self.saldo = self.saldo/2
+         self.info = " "+self.nome+" encolheu"
+         
 
 def simulaUmaAcao():
    saldo = 100
-   acao1 = 0   # Tenho 0 nessa acao1
-   acao2 = 0   # Dinheiro
+   acao1 = AcaoAleatoria("A1", True, 0)   # Tenho 0 nessa acao1
+   acao2 = AcaoAleatoria("$$", False, 0)   # Dinheiro
    for n in range(10):   # 100 periodos
       info = ""
       # Distribuo
-      acao1 = saldo/2
-      acao2 = saldo/2
-      if( random.random() >= 0.5 ): # Sobe!
-         acao1 = 2*acao1
-         info = " A1 dobrou"
-      else:
-         acao1 = acao1/2
-         info = " A1 encolheu"
-      info += " A2 constante"
-      saldo = acao1 + acao2
-      print( "A1=", acao1, ", A2=", acao2, ", T=", saldo, info)
+      acao1.setSaldo(saldo/2)
+      acao2.setSaldo(saldo/2)
+      acao1.atualizaAcao()
+      acao2.atualizaAcao()
+      saldo = acao1.getSaldo() + acao2.getSaldo()
+      print( "A1=", acao1.getSaldo(), ", A2=", acao2.getSaldo(), ", T=", saldo, acao1.getInfo(), acao2.getInfo() )
 
 def simulaDuasAcoes():
    saldo = 100
-   acao1 = 0   # Tenho 0 nessa acao1
-   acao2 = 0   # Tenho 0 nessa acao2
+   acao1 = AcaoAleatoria("A1", True, 0)   # Tenho 0 nessa acao1
+   acao2 = AcaoAleatoria("A2", True, 0)   # Acao tambem
    for n in range(10):   # 100 periodos
       info = ""
       # Distribuo
-      acao1 = saldo/2
-      acao2 = saldo/2
-      if( random.random() >= 0.5 ): # Sobe!
-         acao1 = 2*acao1
-         info = " A1 dobrou"
-      else:
-         acao1 = acao1/2
-         info = " A1 encolheu"
-      if( random.random() >= 0.5 ): # Sobe!
-         acao2 = 2*acao2
-         info += " A2 dobrou"
-      else:
-         acao2 = acao2/2
-         info += " A2 encolheu"
-      saldo = acao1 + acao2
-      print( "A1=", acao1, ", A2=", acao2, ", T=", saldo, info)
+      acao1.setSaldo(saldo/2)
+      acao2.setSaldo(saldo/2)
+      acao1.atualizaAcao()
+      acao2.atualizaAcao()
+      saldo = acao1.getSaldo() + acao2.getSaldo()
+      print( "A1=", acao1.getSaldo(), ", A2=", acao2.getSaldo(), ", T=", saldo, acao1.getInfo(), acao2.getInfo() )
 
 if __name__ == "__main__":
-   simulaUmaAcao()
+   simulaDuasAcoes()
