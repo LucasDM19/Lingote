@@ -6,6 +6,7 @@ Um tipo de cola, que utiliza as outras classes.
 from RegressaoLinear import RegressaoLinear
 from Apostas import Apostas
 from Binary import Binary
+from Apostas import * # Funcoes
 
 class Highlander():
 
@@ -20,16 +21,17 @@ class Highlander():
    
    def percorreModelo(self, n_reg, n_coef, moeda):
       self.b = Binary(n_reg, n_coef, moeda ) # Coleto os dados
-      self.b.coletaDados(silencioso=True)
+      self.b.coletaDados(silencioso=True, funcaoAvalia=avaliaRetornoUp)
       
       # Faz a regressao      
       self.rl = RegressaoLinear( self.b.getX(), self.b.getY() )
-      self.rl.fazRegressaoLinear(indice_corte=0.5)
+      self.rl.fazRegressaoLinear(indice_corte=0.1) # Testo apenas nos ultimos 10%
       
       self.a = Apostas(_fraction=0.05, _stake=1)
-      self.a.calculaRetornoSimulado( self.rl.getX_Test(), self.rl.getY_Test(), self.rl.getCoeficients(), self.rl.getIntercept() )
+      self.a.calculaRetornoSimulado( self.rl.getX_Test(), self.rl.getY_Test(), self.rl.getCoeficients(), self.rl.getIntercept(), funcaoRetorno=calculaRetornoUp )
       
-      print("Reg=", n_reg, ", coef=", n_coef, ", moeda=", moeda, ", saldo=", h.getApostas().getSaldo(), " ret_medio=", h.getApostas().getRetMedio(), "eq=", h.getRegLin().getCoeficients(), "+", h.getRegLin().getIntercept() )
+      if( h.getApostas().qtd_apostas > 0 ):
+         print("Reg=", n_reg, ", coef=", n_coef, ", moeda=", moeda, ", saldo=", h.getApostas().getSaldo(), " ret_medio=", h.getApostas().getRetMedio(), ", qtd=", h.getApostas().qtd_apostas, "eq=", h.getRegLin().getCoeficients(), "+", h.getRegLin().getIntercept() )
    
    def apostaBinary(self, n_reg, n_coef, moeda):
       n_reg2 = int(n_reg/2) # Modelo apenas metade
@@ -52,15 +54,15 @@ class Highlander():
       print("Reg=", n_reg2, ", coef=", n_coef, ", moeda=", moeda, "eq=", h.getRegLin().getCoeficients(), "+", h.getRegLin().getIntercept() )
    
 if __name__ == "__main__":
-   for i in range(500):
+   for i in range(3000):
       h = Highlander()
       print("Highlander vive e funciona!")
       from random import randint
-      n_reg = randint(3, 9000)
+      n_reg = randint(20000, 90000)
       n_coef = randint(10, 20)
       import random
       moedas = ["frxUSDJPY", "frxGBPUSD", "frxAUDUSD", "frxUSDCAD", "frxEURJPY", "frxUSDCHF", "frxEURCHF", "frxEURGBP", "frxAUDJPY"]
       moeda=random.choice(moedas)
       
-      #h.percorreModelo(n_reg, n_coef, moeda)
-      h.apostaBinary(n_reg, n_coef, moeda)      
+      h.percorreModelo(n_reg, n_coef, moeda)
+      #h.apostaBinary(n_reg, n_coef, moeda)      

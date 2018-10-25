@@ -70,7 +70,7 @@ class Binary():
          "authorize": self.token
       })
       jasao, ws = self.chamaURL(json_data, keepAlive=True, ws=None)
-      print( jasao )
+      #print( jasao )
       
       #Criando contrato
       json_data = json.dumps({
@@ -83,7 +83,7 @@ class Binary():
         "duration_unit": "t",
         "symbol": simbolo })
       jasao, ws = self.chamaURL(json_data, keepAlive=True, ws=ws)
-      print( jasao ) # jasao['error']['message']
+      #print( jasao ) # jasao['error']['message']
       if( 'error' in jasao ): return
       id_contrato = str(jasao['proposal']['id'])
       
@@ -95,7 +95,7 @@ class Binary():
       jasao = self.chamaURL(json_data, keepAlive=False, ws=ws)
       return jasao
    
-   def coletaDado(self, qtd_registros):
+   def coletaDado(self, qtd_registros, funcaoAvalia):
       json_data = json.dumps({
         "ticks_history": self.moeda,
         "end": "latest",
@@ -118,34 +118,29 @@ class Binary():
                p_anterior = float(jasao['history']['prices'][-1*i-1])
                v = (p_atual - p_anterior)/(p_anterior)
                #print(i, p_atual, p_anterior, v)
-               #linhaX.append(v)
-               linhaX.append(p_atual - p_anterior)
+               linhaX.append(v)
+               #linhaX.append(p_atual - p_anterior)
             tick_meio = int(self.num_coef/2)
             p_tick5 = float(jasao['history']['prices'][-1*tick_meio])
             p_recente = float(jasao['history']['prices'][-1])
-            if( p_tick5 > p_recente ):
-               tick5 = 1
-            #elif( p_tick5 < p_recente ):
-               #tick5 = -1
-            else:
-               tick5 = 0
+            tick5 = funcaoAvalia(p_tick5, p_recente)
             precos_Y.append( tick5 )
             precos_X.append( linhaX )
       return precos_X, precos_Y, len(jasao['history']['prices'])
                
-   def coletaDados(self, silencioso=True):
+   def coletaDados(self, silencioso, funcaoAvalia):
       precos_X = []
       precos_Y = [] # 1 se tick 5 foi maior ou 0 se foi menor
       self.MAX_REQ = 5000
       quantidade_inteira = int(self.num_linhas / self.MAX_REQ)
       quantidade_fracao = self.num_linhas % self.MAX_REQ
       for n in range(quantidade_inteira):
-         X1, Y1, tot_prices = self.coletaDado(self.MAX_REQ)
+         X1, Y1, tot_prices = self.coletaDado(self.MAX_REQ, funcaoAvalia)
          precos_X += X1
          precos_Y += Y1
          if( n % 10 == 0 and not silencioso):
             print("N=", n, ", X=", len(precos_X[-1]), ", Y=", len(precos_Y), ", Ret=", tot_prices)
-      X2, Y2, tot_prices = self.coletaDado(quantidade_fracao)
+      X2, Y2, tot_prices = self.coletaDado(quantidade_fracao, funcaoAvalia)
       precos_X += X2
       precos_Y += Y2
       if( not silencioso and len(precos_X) > 1 ):

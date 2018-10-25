@@ -60,7 +60,7 @@ class RegressaoLinear:
       self.separaDados() # Split the data
       
       # Create linear regression object
-      self.regr = linear_model.LinearRegression()
+      self.regr = linear_model.LinearRegression() # normalize=True
       
       # Train the model using the training sets
       self.regr.fit(self.X_train, self.Y_train)
