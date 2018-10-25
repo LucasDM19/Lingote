@@ -4,6 +4,7 @@ Define as coletas de dados da API da Binary.com
 
 import websocket   # pip install websocket-client
 import json
+from Hush import API_TOKEN, APP_ID
 
 class Binary():
 
@@ -11,6 +12,7 @@ class Binary():
       if(_num_linhas is not None): self.setNumLinhas(_num_linhas)
       if(_num_coef is not None): self.setNumCoeficiente(_num_coef)
       if(_moeda is not None): self.setMoeda(_moeda)
+      self.token = API_TOKEN # Para autorizar antes da aposta
    
    def setNumLinhas(self, _num_linhas):
       self.num_linhas = _num_linhas
@@ -27,44 +29,55 @@ class Binary():
    def getY(self):
       return self.precos_Y
 
-   def chamaURL(self, json_data):
-      from Hush import APP_ID
+   def chamaURL(self, json_data, keepAlive=False, ws=None):
       apiUrl = "wss://ws.binaryws.com/websockets/v3?app_id="+APP_ID
-      ws = websocket.create_connection(apiUrl)
+      if( ws is None ):
+         ws = websocket.create_connection(apiUrl)
       ws.send(json_data)
       result = ws.recv()
-      ws.close()   # Vamos economizar
-      return result
+      jasao = json.loads(result)
+      if( 'error' in jasao ):   # Erro na chamada
+         print("Erro na chamada!", jasao['error']['message'])
+      if( not keepAlive ):
+         ws.close()   # Vamos economizar
+         return jasao
+      return jasao, ws   # Retorna conexao
    
    def obtemSaldo(self):
       json_data = json.dumps({
          "balance": 1,
          "subscribe": 1 })
-      result = self.chamaURL(json_data)
-      jasao = json.loads(result)
+      jasao = self.chamaURL(json_data)
       print( jasao['balance']['balance'] )
       return jasao['balance']['balance']
    
    def fazAposta(self, quantidade, simbolo):
+      #Autorizando
+      json_data = json.dumps({
+         "authorize": self.token
+      })
+      jasao, ws = self.chamaURL(json_data, keepAlive=True, ws=None)
+      print( jasao )
+      
+      #Criando contrato
       json_data = json.dumps({
         "proposal": 1,
         "amount": str(quantidade),
-        "basis": "stake",
+        "basis": "payout",
         "contract_type": "CALL", # "CALL" para acima "PUT" para Abaixo
         "currency": "USD",
         "duration": "5",
         "duration_unit": "t",
         "symbol": simbolo })
-      result = self.chamaURL(json_data)
-      jasao = json.loads(result)
+      jasao, ws = self.chamaURL(json_data, keepAlive=True, ws=ws)
       print( jasao ) # jasao['error']['message']
-      id_contrato = jasao['echo_req']['proposal']['id']
+      id_contrato = str(jasao['proposal']['id'])
       
+      #Enviando contrato
       json_data = json.dumps({
          "buy": id_contrato, #"5951bc87-4967-5eb5-5c73-f1de191ac903",
          "price": 1.1 })
-      result = self.chamaURL(json_data)
-      jasao = json.loads(result)
+      jasao = self.chamaURL(json_data, keepAlive=False, ws=ws)
       return jasao
    
    def coletaDado(self, qtd_registros):
@@ -75,8 +88,7 @@ class Binary():
         "style": "ticks",
         "adjust_start_time": 1,
         "count": qtd_registros })
-      result = self.chamaURL(json_data)
-      jasao = json.loads(result)
+      jasao = self.chamaURL(json_data)
       #print(jasao['history']['prices'])
       #print("Ret=", len(jasao['history']['prices']) )
       precos_X = []

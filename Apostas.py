@@ -7,7 +7,7 @@ class Apostas():
    def __init__(self, _fraction=None, _stake=None ):
       if( _fraction is not None ): self.setFraction(_fraction)
       if( _stake is not None ): self.setStake(_stake)
-
+      
    # fracao da banca
    def setFraction(self, _fraction):
       #if _fraction is None: _fraction = 0.05
