@@ -40,26 +40,26 @@ class Highlander():
       self.rl = RegressaoLinear( self.b.getX(), self.b.getY() )
       self.rl.fazRegressaoLinear(indice_corte=-1) # Com -1, nao faz Test
       
-      if( h.getRegLin().getIntercept() == 1 ):
+      if( h.getRegLin().getIntercept() == 1 ): 
          tipo="CALL"
       else:
          tipo="PUT"
-      n_tick = int(n_coef/2)
-      self.b.fazAposta(2.1, self.b.getMoeda(), tipo, n_tick ) # Atencao!
+      n_tick = int(n_coef/2)+1
+      self.b.fazAposta(2.2, self.b.getMoeda(), tipo, n_tick ) # Atencao!
       
       print("Reg=", n_reg2, ", coef=", n_coef, ", moeda=", moeda, "eq=", h.getRegLin().getCoeficients(), "+", h.getRegLin().getIntercept() )
    
 if __name__ == "__main__":
-   for i in range(50):
+   for i in range(500):
       h = Highlander()
       print("Highlander vive e funciona!")
       from random import randint
       n_reg = randint(3, 9000)
       n_coef = randint(10, 20)
       import random
-      #moedas = ["frxUSDJPY", "frxGBPUSD", "frxAUDUSD", "frxUSDCAD", "frxEURJPY", "frxUSDCHF", "frxEURCHF", "frxEURGBP", "frxAUDJPY"]
+      moedas = ["frxUSDJPY", "frxGBPUSD", "frxAUDUSD", "frxUSDCAD", "frxEURJPY", "frxUSDCHF", "frxEURCHF", "frxEURGBP", "frxAUDJPY"]
       #moedas = ["frxUSDJPY", "frxGBPUSD", "frxAUDUSD", "frxEURJPY", "frxUSDCHF", "frxEURCHF", "frxEURGBP", "frxAUDJPY"]
-      moedas = ["frxAUDJPY"]
+      #moedas = ["frxAUDJPY"]
       moeda=random.choice(moedas)
       #h.percorreModelo(n_reg, n_coef, moeda)
       h.apostaBinary(n_reg, n_coef, moeda)      

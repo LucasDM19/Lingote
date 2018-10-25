@@ -74,6 +74,7 @@ class Binary():
         "symbol": simbolo })
       jasao, ws = self.chamaURL(json_data, keepAlive=True, ws=ws)
       print( jasao ) # jasao['error']['message']
+      if( 'error' in jasao ): return
       id_contrato = str(jasao['proposal']['id'])
       
       #Enviando contrato
