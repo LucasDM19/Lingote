@@ -28,6 +28,9 @@ class Binary():
    
    def getY(self):
       return self.precos_Y
+      
+   def getMoeda(self):
+      return self.moeda
 
    def chamaURL(self, json_data, keepAlive=False, ws=None):
       apiUrl = "wss://ws.binaryws.com/websockets/v3?app_id="+APP_ID
@@ -51,7 +54,7 @@ class Binary():
       print( jasao['balance']['balance'] )
       return jasao['balance']['balance']
    
-   def fazAposta(self, quantidade, simbolo):
+   def fazAposta(self, quantidade, simbolo, tipo="CALL", n_tick=5):
       #Autorizando
       json_data = json.dumps({
          "authorize": self.token
@@ -64,9 +67,9 @@ class Binary():
         "proposal": 1,
         "amount": str(quantidade),
         "basis": "payout",
-        "contract_type": "CALL", # "CALL" para acima "PUT" para Abaixo
+        "contract_type": tipo, # "CALL" para acima "PUT" para Abaixo
         "currency": "USD",
-        "duration": "5",
+        "duration": str(n_tick),
         "duration_unit": "t",
         "symbol": simbolo })
       jasao, ws = self.chamaURL(json_data, keepAlive=True, ws=ws)

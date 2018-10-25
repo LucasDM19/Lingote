@@ -54,7 +54,7 @@ class RegressaoLinear:
       self.Y_train = self.Y[:-1*self.corte]
       self.Y_test = self.Y[-1*self.corte:]
       
-   def fazRegressaoLinear(self, indice_corte=0.5):
+   def fazRegressaoLinear(self, indice_corte=0.5):   #indice_corte=-1, apenas Train
       #Regressao
       self.indice_corte = indice_corte
       self.separaDados() # Split the data
@@ -66,7 +66,8 @@ class RegressaoLinear:
       self.regr.fit(self.X_train, self.Y_train)
       
       # Make predictions using the testing set
-      self.Y_pred = self.regr.predict(self.X_test)
+      if( len(self.X_test) > 0 ):
+         self.Y_pred = self.regr.predict(self.X_test)
       
 if __name__ == "__main__":
    rl = RegressaoLinear()
