@@ -104,7 +104,7 @@ class Binary():
         "adjust_start_time": 1,
         "count": qtd_registros })
       jasao = self.chamaURL(json_data)
-      #print(jasao['history']['prices'])
+      #print(jasao['history']['prices'][0:2])
       #print("Ret=", len(jasao['history']['prices']) )
       precos_X = []
       precos_Y = [] # 1 se tick 5 foi maior ou 0 se foi menor
@@ -118,12 +118,15 @@ class Binary():
                p_anterior = float(jasao['history']['prices'][-1*i-1])
                v = (p_atual - p_anterior)/(p_anterior)
                #print(i, p_atual, p_anterior, v)
-               linhaX.append(v)
+               #linhaX.append(v)
+               linhaX.append(p_atual - p_anterior)
             tick_meio = int(self.num_coef/2)
             p_tick5 = float(jasao['history']['prices'][-1*tick_meio])
             p_recente = float(jasao['history']['prices'][-1])
             if( p_tick5 > p_recente ):
                tick5 = 1
+            #elif( p_tick5 < p_recente ):
+               #tick5 = -1
             else:
                tick5 = 0
             precos_Y.append( tick5 )

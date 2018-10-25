@@ -43,7 +43,9 @@ class Highlander():
       if( h.getRegLin().getIntercept() == 1 ): 
          tipo="CALL"
       else:
-         tipo="PUT"
+         #tipo="PUT"
+         return
+         
       n_tick = int(n_coef/2)+1
       self.b.fazAposta(2, self.b.getMoeda(), tipo, n_tick ) # Atencao!
       
@@ -58,8 +60,7 @@ if __name__ == "__main__":
       n_coef = randint(10, 20)
       import random
       moedas = ["frxUSDJPY", "frxGBPUSD", "frxAUDUSD", "frxUSDCAD", "frxEURJPY", "frxUSDCHF", "frxEURCHF", "frxEURGBP", "frxAUDJPY"]
-      #moedas = ["frxUSDJPY", "frxGBPUSD", "frxAUDUSD", "frxEURJPY", "frxUSDCHF", "frxEURCHF", "frxEURGBP", "frxAUDJPY"]
-      #moedas = ["frxAUDJPY"]
       moeda=random.choice(moedas)
+      
       #h.percorreModelo(n_reg, n_coef, moeda)
       h.apostaBinary(n_reg, n_coef, moeda)      
