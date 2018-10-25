@@ -45,7 +45,7 @@ class Highlander():
       else:
          tipo="PUT"
       n_tick = int(n_coef/2)+1
-      self.b.fazAposta(2.2, self.b.getMoeda(), tipo, n_tick ) # Atencao!
+      self.b.fazAposta(2, self.b.getMoeda(), tipo, n_tick ) # Atencao!
       
       print("Reg=", n_reg2, ", coef=", n_coef, ", moeda=", moeda, "eq=", h.getRegLin().getCoeficients(), "+", h.getRegLin().getIntercept() )
    

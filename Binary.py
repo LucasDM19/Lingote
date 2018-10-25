@@ -54,6 +54,16 @@ class Binary():
       print( jasao['balance']['balance'] )
       return jasao['balance']['balance']
    
+   def obtemUltimoPreco(self):
+      json_data = json.dumps({
+        "ticks_history": self.moeda,
+        "end": "latest",
+        "style": "ticks",
+        "adjust_start_time": 1,
+        "count": 1 })
+      jasao = self.chamaURL(json_data)
+      return float(jasao['history']['prices'][0])
+   
    def fazAposta(self, quantidade, simbolo, tipo="CALL", n_tick=5):
       #Autorizando
       json_data = json.dumps({
@@ -78,9 +88,10 @@ class Binary():
       id_contrato = str(jasao['proposal']['id'])
       
       #Enviando contrato
+      ultimo_preco = round(self.obtemUltimoPreco(),2)
       json_data = json.dumps({
          "buy": id_contrato, #"5951bc87-4967-5eb5-5c73-f1de191ac903",
-         "price": 1.1 })
+         "price": ultimo_preco })
       jasao = self.chamaURL(json_data, keepAlive=False, ws=ws)
       return jasao
    
