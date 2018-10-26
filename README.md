@@ -18,7 +18,8 @@ Faz Regressão Linear de conjuntos X e Y informados.
 Acessa a API da Binary, e retorna os dados em formatos X Y.
 - Apostas.py
 Simula apostas do mercado Binary, usando a Regressão Linear.
-
+- VolDump.py
+Simulador de Volatility Dump, ou o Shannon's Demon.
 
 # Requisitos
 websocket-client

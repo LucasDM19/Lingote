@@ -89,6 +89,7 @@ class Binary():
       
       #Enviando contrato
       ultimo_preco = round(self.obtemUltimoPreco(),2)
+      ultimo_preco = 100  # Preco maximo
       json_data = json.dumps({
          "buy": id_contrato, #"5951bc87-4967-5eb5-5c73-f1de191ac903",
          "price": ultimo_preco })
