@@ -96,6 +96,42 @@ class Binary():
       jasao = self.chamaURL(json_data, keepAlive=False, ws=ws)
       return jasao
    
+   def coletaDadoMediaHighLow(self, qtd_registros, funcaoAvalia):
+      precos_X = []
+      precos_Y = [] # 1 se ultimo tick foi maior ou 0 se foi menor
+      for i in range(qtd_registros):
+         linhaX = []
+         for qtd in [5000, 2500, 1800, 1250, 900, 700, 450, 360, 90, 180]: # 10000, 7500,
+            print("Agora em", qtd)
+            json_data = json.dumps({
+              "ticks_history": self.moeda,
+              "end": "latest",
+              "style": "ticks",
+              "adjust_start_time": 1,
+              "count": qtd })
+            jasao = self.chamaURL(json_data)
+            if('history' not in jasao):
+               print("JSon estranho!", jasao['error']['code'], " - ", jasao['error']['message'])
+            else: # Tudo blz com o Json
+               diferencas = [10000*(float(jasao['history']['prices'][j])-float(jasao['history']['prices'][-1])) for j in range(len(jasao['history']['prices']))]
+               #print([(float(jasao['history']['prices'][j]),float(jasao['history']['prices'][-1])) for j in range(len(jasao['history']['prices']))][5])
+               maxima = max(diferencas)
+               minima = min(diferencas)
+               media = 1.0*sum(diferencas)/len(diferencas)
+               linhaX.append(media)
+               linhaX.append(maxima)
+               linhaX.append(minima)
+               #print(jasao['history']['prices'][-50], jasao['history']['prices'][-1], 1000*(float(jasao['history']['prices'][-50])-float(jasao['history']['prices'][-1])))
+               #print(maxima, media, minima)
+         tick_meio = 180 #int(self.num_coef/2)
+         p_tick5 = float(jasao['history']['prices'][-1*tick_meio])
+         p_recente = float(jasao['history']['prices'][-1])
+         tick5 = funcaoAvalia(p_tick5, p_recente)
+         precos_Y.append( tick5 )
+         precos_X.append( linhaX )
+      print(len(precos_X), len(precos_Y), len(precos_X[0]))
+      return precos_X, precos_Y, len(jasao['history']['prices'])
+   
    def coletaDado(self, qtd_registros, funcaoAvalia):
       json_data = json.dumps({
         "ticks_history": self.moeda,
@@ -136,12 +172,14 @@ class Binary():
       quantidade_inteira = int(self.num_linhas / self.MAX_REQ)
       quantidade_fracao = self.num_linhas % self.MAX_REQ
       for n in range(quantidade_inteira):
-         X1, Y1, tot_prices = self.coletaDado(self.MAX_REQ, funcaoAvalia)
+         #X1, Y1, tot_prices = self.coletaDado(self.MAX_REQ, funcaoAvalia)
+         X1, Y1, tot_prices = self.coletaDadoMediaHighLow(self.MAX_REQ, funcaoAvalia)
          precos_X += X1
          precos_Y += Y1
          if( n % 10 == 0 and not silencioso):
             print("N=", n, ", X=", len(precos_X[-1]), ", Y=", len(precos_Y), ", Ret=", tot_prices)
-      X2, Y2, tot_prices = self.coletaDado(quantidade_fracao, funcaoAvalia)
+      #X2, Y2, tot_prices = self.coletaDado(quantidade_fracao, funcaoAvalia)
+      X2, Y2, tot_prices = self.coletaDadoMediaHighLow(quantidade_fracao, funcaoAvalia)
       precos_X += X2
       precos_Y += Y2
       if( not silencioso and len(precos_X) > 1 ):

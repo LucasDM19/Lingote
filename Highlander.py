@@ -21,7 +21,7 @@ class Highlander():
    
    def percorreModelo(self, n_reg, n_coef, moeda):
       self.b = Binary(n_reg, n_coef, moeda ) # Coleto os dados
-      self.b.coletaDados(silencioso=True, funcaoAvalia=avaliaRetornoUp)
+      self.b.coletaDados(silencioso=False, funcaoAvalia=avaliaRetornoUp)
       
       # Faz a regressao      
       self.rl = RegressaoLinear( self.b.getX(), self.b.getY() )
@@ -69,13 +69,14 @@ if __name__ == "__main__":
       h = Highlander()
       print("Highlander vive e funciona!")
       from random import randint
-      n_reg = randint(10000, 50000)
+      n_reg = randint(10, 20)
       n_coef = randint(10, 20)
       import random
       moedas = ["frxUSDJPY", "frxGBPUSD", "frxAUDUSD", "frxUSDCAD", "frxEURJPY", "frxUSDCHF", "frxEURCHF", "frxEURGBP", "frxAUDJPY"]
       moeda=random.choice(moedas)
       
       valeAPena = h.percorreModelo(n_reg, n_coef, moeda)
+      valeAPena = False
       if( valeAPena ):
          for v in range(5):
             totApostas += h.apostaBinary(int(n_reg), n_coef, moeda, h.getRegLin() )   # Apenas uma parte
