@@ -65,18 +65,19 @@ class Highlander():
       
 if __name__ == "__main__":
    totApostas = 0
-   for i in range(500):
+   for i in range(1):
       h = Highlander()
       print("Highlander vive e funciona!")
       from random import randint
-      n_reg = randint(10, 20)
+      #n_reg = randint(99849, 15)
+      n_reg = 99849*2
       n_coef = randint(10, 20)
       import random
       moedas = ["frxUSDJPY", "frxGBPUSD", "frxAUDUSD", "frxUSDCAD", "frxEURJPY", "frxUSDCHF", "frxEURCHF", "frxEURGBP", "frxAUDJPY"]
       moeda=random.choice(moedas)
       
       valeAPena = h.percorreModelo(n_reg, n_coef, moeda)
-      valeAPena = False
+      #valeAPena = False
       if( valeAPena ):
          for v in range(5):
             totApostas += h.apostaBinary(int(n_reg), n_coef, moeda, h.getRegLin() )   # Apenas uma parte
