@@ -113,9 +113,9 @@ class Binary():
          if('history' not in jasao):
             print("JSon estranho!", jasao['error']['code'], " - ", jasao['error']['message'])
          else: # Tudo blz com o Json
-               for qtd in [5000, 2500, 1800, 1250, 900, 700, 450, 360, 90, 180]: # 10000, 7500,               
+               for qtd in [10000, 7500, 5000, 2500, 1800, 1250, 900, 700, 450, 360, 90, 180]: #             
                   diferencas = [10000*(float(jasao['history']['prices'][j])-float(jasao['history']['prices'][-1])) for j in range(len(jasao['history']['prices'][-1*qtd:] ))]
-                  #print([(float(jasao['history']['prices'][j]),float(jasao['history']['prices'][-1])) for j in range(len(jasao['history']['prices']))][5])
+                  print(qtd, [(float(jasao['history']['prices'][j]),float(jasao['history']['prices'][-1])) for j in range(len(jasao['history']['prices']))][5])
                   maxima = max(diferencas)
                   minima = min(diferencas)
                   media = 1.0*sum(diferencas)/len(diferencas)
